@@ -1,5 +1,6 @@
 package quiz;
-import java.awt.*; 
+
+import java.awt.*;
 import java.awt.event.*; //package to implement event response 
 import javax.swing.*; //package to implement swing gui
 import java.sql.*; //package to connect to mysql database
@@ -59,7 +60,7 @@ public class Questions extends JFrame implements ActionListener
           Class.forName("com.mysql.jdbc.Driver");
           Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/qa","root","shre"); //connecting to database 'qa'
           Statement stmt = con.createStatement();
-          if(e.getSource()==b1 && current ==7 ) //if all 10 questions have been displayed and user clicks on next, i.e., no more questions are available to be displayed
+          if(e.getSource()==b1 && current ==9 ) //if all 10 questions have been displayed and user clicks on next, i.e., no more questions are available to be displayed
           {
               adduserans(); //adding user's response to the 10th question
               JOptionPane.showMessageDialog(this,"No more questions. Please go back to previous question or end test and see result.\n");   
@@ -107,11 +108,11 @@ public class Questions extends JFrame implements ActionListener
               current++;   
               check(); //checks user's responses against correct responses stored in database 
               if(flag==0)
-               a = JOptionPane.showConfirmDialog(this,"Attempted questions: "+attempted+" / 8\nTime taken: "+EndTime+" seconds\nYour Score: "+count+" / 8\nPercentage: "+(count*12.5)+" %\nDo you wish to see the answer key ?");  
+               a = JOptionPane.showConfirmDialog(this,"Attempted questions: "+attempted+" / 10\nTime taken: "+EndTime+" seconds\nYour Score: "+count+" \nDo you wish to see the answer key ?");  
               else if(flag==1)
-               a = JOptionPane.showConfirmDialog(this,"Attempted questions: "+attempted+" / 8\nTime taken: "+EndTime+" minutes "+seconds+" seconds\nYour Score: "+count+" / 8\nPercentage: "+(count*8)+" %\nDo you wish to see the answer key ?");     
+               a = JOptionPane.showConfirmDialog(this,"Attempted questions: "+attempted+" / 10\nTime taken: "+EndTime+" minutes "+seconds+" seconds\nYour Score: "+count+" \nDo you wish to see the answer key ?");     
               else
-               a = JOptionPane.showConfirmDialog(this,"Attempted questions: "+attempted+" / 8\nTime taken: "+EndTime+" hours "+minutes+" minutes "+seconds+" seconds\nYour Score: "+count+" / 8\nPercentage: "+(count*8)+" %\nDo you wish to see the answer key ?");     
+               a = JOptionPane.showConfirmDialog(this,"Attempted questions: "+attempted+" / 10\nTime taken: "+EndTime+" hours "+minutes+" minutes "+seconds+" seconds\nYour Score: "+count+" \nDo you wish to see the answer key ?");     
               //displays number of attempted questions, total score and percentage
               if(a==JOptionPane.YES_OPTION) //checks if user wants to see answer key or not
                   showAnswerKey();
@@ -248,11 +249,36 @@ public class Questions extends JFrame implements ActionListener
               l.setText("Q.8 "+s1);  
               jb[0].setText(s2);jb[1].setText(s3);jb[2].setText(s4);jb[3].setText(s5);  
           }  }
+          if(current==8)  
+          {  
+              String sql="select * from stuqao where qno=9";
+              ResultSet rs = stmt.executeQuery(sql);
+              if(rs.next()){ 
+              String s1 =rs.getString("question");
+              String s2 =rs.getString("option1");
+              String s3 =rs.getString("option2");
+              String s4 =rs.getString("option3");
+              String s5 =rs.getString("option4");
+              l.setText("Q.9 "+s1);  
+              jb[0].setText(s2);jb[1].setText(s3);jb[2].setText(s4);jb[3].setText(s5);  
+          }  }
+          if(current==9)  
+          {  
+              String sql="select * from stuqao where qno=10";
+              ResultSet rs = stmt.executeQuery(sql);
+              if(rs.next()){ 
+              String s1 =rs.getString("question");
+              String s2 =rs.getString("option1");
+              String s3 =rs.getString("option2");
+              String s4 =rs.getString("option3");
+              String s5 =rs.getString("option4");
+              l.setText("Q.10 "+s1);  
+              jb[0].setText(s2);jb[1].setText(s3);jb[2].setText(s4);jb[3].setText(s5);  
+          }  }
          
-          
           l.setBounds(30,40,450,20);  
           for(int i=0,j=0;i<=90;i+=30,j++)  
-              jb[j].setBounds(50,80+i,200,20);  
+              jb[j].setBounds(50,80+i,250,20);  
       }   
       catch(Exception e)
       {
@@ -291,7 +317,7 @@ public class Questions extends JFrame implements ActionListener
           Class.forName("com.mysql.jdbc.Driver");
           Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/qa","root","shre");
           Statement stmt = con.createStatement();
-          for(int i=1;i<=8;i++)
+          for(int i=1;i<=10;i++)
           {
               String sql="select userans, correctans from stuua where qno="+i+"";
               ResultSet rs = stmt.executeQuery(sql);
@@ -319,7 +345,7 @@ public class Questions extends JFrame implements ActionListener
           Statement stmt = con.createStatement();
           String answerkey="";
           answerkey+="Answer Key:\nQ.No.  Your answer  Correct Answer\n";
-          for(int i=1;i<=8;i++)
+          for(int i=1;i<=10;i++)
           {
               String sql="select userans, correctans from stuua where qno="+i+"";
               ResultSet rs = stmt.executeQuery(sql);
@@ -328,7 +354,7 @@ public class Questions extends JFrame implements ActionListener
               if(s1.equals("")) //if user hasn't attempted this question, we assign NA to variable
                   s1="NA";
               String s2 =rs.getString("correctans"); //stores correct answer
-              if(i<=8)
+              if(i<=10)
                answerkey+="   "+(char)(i+48)+"         "+s1+"         "+s2+"\n";
               else //0-9 is 48-57 in ascii 
                answerkey+="  10"+"         "+s1+"         "+s2+"\n";
@@ -401,9 +427,9 @@ public class Questions extends JFrame implements ActionListener
           stmt.executeUpdate("insert into ua values(13,'','None of the above')");
           stmt.executeUpdate("insert into ua values(14,'','Multiple threads')");
           stmt.executeUpdate("insert into ua values(15,'','friendly')");
-          stmt.executeUpdate("insert into ua values(16,'','A class)");
+          stmt.executeUpdate("insert into ua values(16,'','A class')");
           stmt.executeUpdate("insert into ua values(17,'','Oak')");
-          stmt.executeUpdate("insert into ua values(18'','Remote interface')");
+          stmt.executeUpdate("insert into ua values(18,'','Remote interface')");
          
         
           
@@ -429,16 +455,18 @@ public class Questions extends JFrame implements ActionListener
           int c=0;
           int p;
           for(int i=0;i<=18;i++)
-              a[i]=0;
-          while(c!=9)
+          { a[i]=0;
+          }
+          
+          while(c!=10)
           {
-              p=1+(int)(Math.random()*18); //generating random integers in range [1,20]
+              p=1+(int)(Math.random()*18); //generating random integers in range [1,18]
               if(a[p]==0)
               {
                   a[p]=1; //marking the 10 randomly selected integers
                   c++; //counting number of random indexes marked
               }
-          }
+          } 
           c=0;
           for(int i=1;i<=18;i++)
           {
@@ -446,7 +474,7 @@ public class Questions extends JFrame implements ActionListener
               {
                   c++;
                   String sql="select * from qao where qno="+i+"";
-                  ResultSet randomrs = stmt.executeQuery(sql);
+                  ResultSet randomrs = stmt.executeQuery(sql);//retrieve data
                   if(randomrs.next()) {
                   String s1 =randomrs.getString("question");
                   String s2 =randomrs.getString("option1");
@@ -462,22 +490,19 @@ public class Questions extends JFrame implements ActionListener
                   stmt.executeUpdate("insert into stuua values("+c+",'','"+s1+"')");
                   randomrs.close();
                   }
-              }
+              } }
+              con.close();
+          } 
+          catch(Exception e)
+          {
+              System.out.println("pickrandom\n"+e);
           }
-          con.close();
       }
-      catch(Exception e)
-      {
-          System.out.println("pickrandom\n"+e);
-      }
+      public static void main(String s[])
+      {  
+          qaoDBcon(); //creating question-option database
+          uaDBcon(); //creating user answer-correct answer database
+          pickrandom(); //creating question-option database that will be asked to student
+          new Questions("Online Exam System");  // creating object 
+      }  
   }
-  public static void main(String s[])
-  {  
-      qaoDBcon(); //creating question-option database
-      uaDBcon(); //creating user answer-correct answer database
-      pickrandom(); //creating question-option database that will be asked to student
-      new Questions("QUIZ");
-      
-  }
-}
-
